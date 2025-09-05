@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/team_controller.dart';
+import '../../models/pokemon.dart';
 
 class TeamListPage extends GetView<TeamController> {
   const TeamListPage({super.key});
@@ -39,7 +40,7 @@ class TeamListPage extends GetView<TeamController> {
 
   void _showEditMembersDialog(BuildContext context, int index) {
     final team = controller.savedTeams[index];
-    final selected = team.pokemons.toList().obs;
+    final selected = team.pokemons.toList().obs; // 👈 ใช้ RxList
 
     Get.dialog(
       Dialog(
@@ -61,7 +62,7 @@ class TeamListPage extends GetView<TeamController> {
                   return GridView.builder(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 6, // 👈 แถวละ 6 ตัว
+                          crossAxisCount: 6, // 👈 แถวละ 6
                           mainAxisSpacing: 6,
                           crossAxisSpacing: 6,
                           childAspectRatio: 0.7,
@@ -69,53 +70,66 @@ class TeamListPage extends GetView<TeamController> {
                     itemCount: pokemons.length,
                     itemBuilder: (_, i) {
                       final p = pokemons[i];
-                      final isSelected = selected.contains(p);
 
-                      return GestureDetector(
-                        onTap: () {
-                          if (isSelected) {
-                            selected.remove(p);
-                          } else {
-                            if (selected.length < 3) {
-                              selected.add(p);
+                      // 👇 ครอบการ์ดแต่ละใบด้วย Obx เพื่ออัปเดตเรียลไทม์
+                      return Obx(() {
+                        final isSelected = selected.contains(p);
+
+                        return GestureDetector(
+                          onTap: () {
+                            if (isSelected) {
+                              selected.remove(p);
                             } else {
-                              Get.snackbar(
-                                "Limit Reached",
-                                "You can only select 3 Pokémon!",
-                                snackPosition: SnackPosition.TOP,
-                              );
+                              if (selected.length < 3) {
+                                selected.add(p);
+                              } else {
+                                Get.snackbar(
+                                  "Limit Reached",
+                                  "You can only select 3 Pokémon!",
+                                  snackPosition: SnackPosition.TOP,
+                                );
+                              }
                             }
-                          }
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: isSelected
-                                  ? Colors.green
-                                  : Colors.grey.shade300,
-                              width: isSelected ? 3 : 1,
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: isSelected
+                                    ? Colors.green
+                                    : Colors.grey.shade300,
+                                width: isSelected ? 3 : 1,
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Image.network(
+                                    p.imageUrl,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                                Text(
+                                  p.name,
+                                  style: const TextStyle(fontSize: 10),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Icon(
+                                  isSelected
+                                      ? Icons.check_circle
+                                      : Icons.add_circle_outline,
+                                  color: isSelected
+                                      ? Colors.green
+                                      : Colors.grey,
+                                  size: 16,
+                                ),
+                              ],
                             ),
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Image.network(
-                                  p.imageUrl,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              Text(
-                                p.name,
-                                style: const TextStyle(fontSize: 10),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
+                        );
+                      });
                     },
                   );
                 }),

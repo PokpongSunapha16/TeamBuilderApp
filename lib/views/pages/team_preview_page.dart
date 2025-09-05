@@ -3,21 +3,41 @@ import 'package:get/get.dart';
 import '../../controllers/team_controller.dart';
 import 'team_list_page.dart';
 
-class TeamPreviewPage extends GetView<TeamController> {
+class TeamPreviewPage extends StatefulWidget {
   const TeamPreviewPage({super.key});
+
+  @override
+  State<TeamPreviewPage> createState() => _TeamPreviewPageState();
+}
+
+class _TeamPreviewPageState extends State<TeamPreviewPage> {
+  final TeamController controller = Get.find<TeamController>();
+
+  // 👇 เก็บชื่อทีมที่ถูก SAVE แล้ว
+  final savedTeamName = "".obs;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Your Pokémon Team')),
+      // 🔸 AppBar จะเปลี่ยนชื่อเฉพาะเมื่อ SAVE เท่านั้น
+      appBar: AppBar(
+        title: Obx(
+          () => Text(
+            savedTeamName.value.isEmpty
+                ? 'Your Pokémon Team'
+                : savedTeamName.value,
+          ),
+        ),
+      ),
       body: Obx(() {
         final list = controller.team;
+
         return SingleChildScrollView(
           padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // --- Team Name + SAVE Button ---
+              // --- Team Name + SAVE + Team List ---
               Row(
                 children: [
                   Expanded(
@@ -35,6 +55,7 @@ class TeamPreviewPage extends GetView<TeamController> {
                     ),
                   ),
                   const SizedBox(width: 12),
+                  // ✅ SAVE: จะเปลี่ยน AppBar หลังจากกดบันทึก
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
@@ -45,12 +66,14 @@ class TeamPreviewPage extends GetView<TeamController> {
                       ),
                     ),
                     onPressed: () {
-                      if (controller.teamName.value.trim().isEmpty) {
+                      final name = controller.teamName.value.trim();
+
+                      if (name.isEmpty) {
                         Get.snackbar(
                           "Error",
                           "Please enter a team name!",
                           snackPosition: SnackPosition.TOP,
-                          backgroundColor: Colors.redAccent.withOpacity(0.8),
+                          backgroundColor: Colors.redAccent.withOpacity(0.85),
                           colorText: Colors.white,
                           margin: const EdgeInsets.all(12),
                           borderRadius: 8,
@@ -62,17 +85,48 @@ class TeamPreviewPage extends GetView<TeamController> {
                           "Error",
                           "Team must have exactly 3 Pokémon!",
                           snackPosition: SnackPosition.TOP,
+                          backgroundColor: Colors.redAccent.withOpacity(0.85),
+                          colorText: Colors.white,
+                          margin: const EdgeInsets.all(12),
+                          borderRadius: 8,
                         );
                         return;
                       }
 
                       controller.saveTeam();
-                      Get.off(() => const TeamListPage());
+                      savedTeamName.value =
+                          name; // 👈 เปลี่ยนชื่อ AppBar ตอนนี้
+
+                      Get.snackbar(
+                        "Saved",
+                        "Team \"$name\" has been saved.",
+                        snackPosition: SnackPosition.TOP,
+                        backgroundColor: Colors.green.withOpacity(0.85),
+                        colorText: Colors.white,
+                        margin: const EdgeInsets.all(12),
+                        borderRadius: 8,
+                      );
                     },
                     child: const Text("SAVE"),
                   ),
+                  const SizedBox(width: 8),
+                  // 🟠 Team List
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.list),
+                    label: const Text("Team List"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 18,
+                      ),
+                    ),
+                    onPressed: () => Get.to(() => const TeamListPage()),
+                  ),
                 ],
               ),
+
               const SizedBox(height: 20),
 
               // --- Team Members ---
