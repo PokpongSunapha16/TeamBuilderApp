@@ -3,6 +3,9 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'bindings/app_bindings.dart';
 import 'views/pages/main_page.dart';
+import 'package:pocketbase/pocketbase.dart';
+
+final pb = PocketBase('http://127.0.0.1:8090');
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

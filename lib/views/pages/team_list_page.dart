@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/team_controller.dart';
-import '../../models/pokemon.dart';
 
 class TeamListPage extends GetView<TeamController> {
   const TeamListPage({super.key});

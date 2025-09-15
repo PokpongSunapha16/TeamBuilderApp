@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:team_builder_app/views/pages/terms_page.dart';
 import '../pages/create_pokemon_team.dart';
 import '../pages/team_list_page.dart';
+import '../pages/pokemon_detail_page.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -59,6 +61,22 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Get.back();
               Get.to(() => const TeamListPage());
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.electric_bolt),
+            title: const Text('Pokemon Detail'),
+            onTap: () {
+              Get.back();
+              Get.to(() => const PokemonDetailPage());
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.perm_device_info),
+            title: const Text('Application Terms'),
+            onTap: () {
+              Get.back();
+              Get.to(() => const TermsPage());
             },
           ),
         ],
