@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.egg-info/
+.eggs/
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# Logs and temporary files
+*.log
+*.tmp
+temp/
+tmp/
+
+# Distribution / packaging
+build/
+dist/
+*.egg
+*.whl
+
+# Specific to Python projects
+.env
+instance/
+celerybeat-schedule
+.pytest_cache/
+htmlcov/
+.coverage
